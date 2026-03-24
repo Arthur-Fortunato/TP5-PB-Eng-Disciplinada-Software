@@ -1,0 +1,94 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build e teste
+        run: |
+          echo "Iniciando a parte de build."
+          mvn clean verify
+          echo "Build finalizado com sucesso"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-jar
+          path: target/*.jar
+
+  dev:
+    needs: build
+    runs-on: ubuntu-latest
+
+    environment: dev
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Simular deploy desenvolvimento
+        run: echo "Deploy realizado no ambiente de desenvolvimento"
+
+  test:
+    needs: dev
+    runs-on: ubuntu-latest
+
+    environment: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Simular deploy teste
+        run: echo "Deploy realizado no ambiente de teste"
+
+  prod:
+    needs: test
+    runs-on: ubuntu-latest
+
+    environment: prod
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Simular deploy produção
+        run: echo "Deploy realizado no ambiente de produção"
+
+      - name: Teste pós-deploy
+        run: mvn test
+
+      - name: Gerar resumo
+        run: |
+          echo "Resumo..." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Build executado" >> $GITHUB_STEP_SUMMARY
+          echo "- Testes automatizados executados" >> $GITHUB_STEP_SUMMARY
+          echo "- Cobertura gerada com JaCoCo" >> $GITHUB_STEP_SUMMARY
