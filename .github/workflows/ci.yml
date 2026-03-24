@@ -31,6 +31,12 @@ jobs:
           name: build-jar
           path: target/*.jar
 
+      - name: Upload JaCoCo
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
+
   dev:
     needs: build
     runs-on: ubuntu-latest
