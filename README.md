@@ -2,32 +2,64 @@
 
 # CRUD de Produtos v2
 
-Projeto simples em **Java utilizando Maven** que implementa um CRUD de produtos com arquitetura em camadas.
+Projeto desenvolvido em **Java com Spring Boot e Maven**, implementando CRUD de produtos com foco em clean code, testes automatizados e CI.
 
-## Estrutura do projeto
+---
 
-* **entity** → classe que representa o produto
-* **repository** → persistência em memória
-* **service** → regras de negócio e validações
-* **controller** → comunicação entre o menu e o service
-* **util** → interface de execução do sistema
+## Arquitetura do projeto
 
-## Build do projeto
+O foi arquitetado em camadas:
 
-Para compilar o projeto:
-**mvn clean package**
+- **entity** → modelo de domínio
+- **repository** → persistência em memória
+- **service** → regras de negócio
+- **controller** → API REST
+- **dto** → transferência de dados (request/response)
 
-## CI (GitHub Actions)
+---
 
-O repositório tem um workflow configurado no GitHub Actions que executa automaticamente o build do projeto.
+## Testes
 
-O pipeline roda quando existe:
+O projeto possui diferentes níveis de testes:
 
-* push na branch **main**
-* criação de **pull request**
+- Testes unitários (na camada de serviço)
+- Testes de integração (no controller usando MockMvc)
+- Testes end-to-end usando Selenium (interface)
 
-Durante a execução o GitHub cria um ambiente Linux e executa:
+---
 
-**mvn clean package**
 
-Isso garante que o projeto sempre compile corretamente.
+## CI/CD (GitHub Actions)
+
+O pipeline automatizado realiza:
+
+-  Build do projeto
+-  Execução de testes automatizados
+-  Testes usando Selenium
+-  Geração de relatório de cobertura
+-  Upload de artefatos
+
+### Gatilhos
+
+- Push na branch **main**
+- Pull Request
+- Execução manual (`workflow_dispatch`)
+
+---
+
+## Ambientes
+
+O pipeline faz uma simulação do deploy em 3 ambientes:
+
+- **dev**
+- **test**
+- **prod**
+
+O ambiente de produção possui aprovação manual antes do deploy
+
+---
+
+## Como executar
+
+- `mvn clean install`
+- `mvn spring-boot:run`
